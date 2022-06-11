@@ -1,0 +1,64 @@
+---
+import i18next from 'i18next'
+import type { GetStaticPathsResult } from 'astro'
+
+export async function getStaticPaths() {
+  const langs = (i18next.options.supportedLngs || []).slice(1)
+  const pages = await Astro.glob<GlobResult>('/src/pages/**/*.astro')
+
+  const r = []
+  for (const l of langs) {
+    for (const p of pages) {
+      if (p.url?.startsWith('/[lang]')) continue
+
+      const baseRoute = {
+        params: {
+          lang: l,
+          path: p.url ? p.url.slice(1) : undefined,
+        },
+        props: {
+          component: p.default,
+        },
+      }
+
+      if (!p.getStaticPaths) {
+        r.push(baseRoute)
+        continue
+      }
+
+      const paths = await p.getStaticPaths()
+      for (const _p of paths) {
+        const path = Object.entries(_p.params).reduce(
+          (u, [k, v]) => u.replace(`[${k}]`, `${v}`),
+          p.url ? p.url.slice(1) : '',
+        )
+        r.push({
+          params: Object.assign({}, baseRoute.params, _p.params, { path }),
+          props: Object.assign({}, baseRoute.props, _p.props),
+        })
+      }
+    }
+  }
+  return r
+}
+
+export interface Props {
+  component: any
+}
+
+interface GlobResult {
+  url?: string,
+  file: string,
+  default: any,
+  getStaticPaths?: () => Promise<GetStaticPathsResult>,
+}
+
+const { lang } = Astro.params
+const { component: Component } = Astro.props
+
+// Ideally this would affect Component and we could remove the hack in Layout
+// Sadly it does not
+// await i18next.changeLanguage(`${lang}`)
+---
+
+<Component />

@@ -1,0 +1,25 @@
+---
+import i18next from "i18next"
+
+const currentLanguage = i18next.language
+const supportedLanguages = (i18next.options.supportedLngs || []).filter(l => l !== 'cimode')
+const defaultLanguage = supportedLanguages[0]
+
+let { pathname } = Astro.canonicalURL
+for (const l of supportedLanguages) {
+  if (pathname.startsWith(`/${l}`)) pathname = pathname.slice(l.length + 1)
+}
+
+const urls = supportedLanguages.map(code => ([code, code === defaultLanguage ? pathname : `/${code}${pathname}`])).sort((a, b) => a[0].localeCompare(b[0]))
+---
+
+<div>
+  <span>{ currentLanguage }: </span>
+  {urls.map(([code, href]) => ( <a {href}>{ code }</a> ))}
+</div>
+
+<style>
+  a {
+    margin-right: 0.25rem;
+  }
+</style>
