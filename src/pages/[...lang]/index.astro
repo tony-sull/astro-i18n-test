@@ -1,0 +1,28 @@
+---
+import i18next, { t } from 'i18next'
+import path from 'path'
+import Layout from '../../layouts/Layout.astro';
+
+export function getStaticPaths() {
+	const langs = (i18next.options.supportedLngs || [])
+
+	return langs.map((lang, i) => ({
+		params: { lang: i === 0 ? undefined : lang }
+	}))
+}
+
+const lang = Astro.params.lang as string
+
+function localeLink(href: string) {
+	return path.join(lang ?? '', href)
+}
+---
+
+<Layout title="Welcome to Astro." lang={lang}>
+	<main>
+		<h1>{ t('test') }</h1>
+		<div><a href={localeLink(`/blog/alpha`)}>Alpha Blog Post</a></div>
+		<div><a href={localeLink(`/blog/beta`)}>Beta Blog Post</a></div>
+		<div><a href={localeLink(`/blog/gamma`)}>Gamma Blog Post</a></div>
+	</main>
+</Layout>

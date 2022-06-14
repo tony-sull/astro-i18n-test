@@ -5,8 +5,8 @@ import Layout from '../../../layouts/Layout.astro'
 export function getStaticPaths() {
 	const langs = (i18next.options.supportedLngs || [])
 
-	return langs.map((lang) => ({
-		params: { lang }
+	return langs.map((lang, i) => ({
+		params: { lang: i === 0 ? undefined : lang }
 	}))
 }
 

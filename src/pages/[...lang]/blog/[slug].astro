@@ -6,10 +6,11 @@ export async function getStaticPaths() {
   const langs = (i18next.options.supportedLngs || [])
   const titles = ['Beta', 'Gamma']
 
-  return langs.map(lang => {
-    return titles.map(title => ({
+  return langs.map((lang, i) => {
+    console.log(i, lang)
+    return titles.map((title) => ({
       params: {
-        lang,
+        lang: i === 0 ? undefined : lang,
         slug: title.toLowerCase()
       },
       props: {
