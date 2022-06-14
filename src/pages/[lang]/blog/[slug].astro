@@ -1,0 +1,35 @@
+---
+import i18next, { t } from 'i18next'
+import Layout from '../../../layouts/Layout.astro'
+
+export async function getStaticPaths() {
+  const langs = (i18next.options.supportedLngs || [])
+  const titles = ['Beta', 'Gamma']
+
+  return langs.map(lang => {
+    return titles.map(title => ({
+      params: {
+        lang,
+        slug: title.toLowerCase()
+      },
+      props: {
+        title
+      }
+    }))
+  }).flat()
+}
+
+export interface Props {
+  title: string
+}
+
+const lang = Astro.params.lang as string
+const { title } = Astro.props
+---
+
+<Layout {title} {lang}>
+  <main>
+    <h1>{ t('test') }: {title}</h1>
+    <p>this is a sample blog post</p>
+  </main>
+</Layout>

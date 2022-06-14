@@ -1,0 +1,22 @@
+---
+import i18next, { t } from 'i18next'
+import Layout from '../../../layouts/Layout.astro'
+
+export function getStaticPaths() {
+	const langs = (i18next.options.supportedLngs || [])
+
+	return langs.map((lang) => ({
+		params: { lang }
+	}))
+}
+
+const lang: string = Astro.params.lang as string
+await i18next.changeLanguage(lang)
+---
+
+<Layout title="Alpha" lang={lang}>
+	<main>
+		<h1>{ t('test') }: Alpha</h1>
+		<p>this is a sample blog post</p>
+	</main>
+</Layout>
