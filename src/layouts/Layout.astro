@@ -4,20 +4,13 @@ import LangSelector from '../components/LangSelector.astro'
 
 export interface Props {
   title: string
+  lang: string
 }
 
-const { title } = Astro.props as Props
+const { title, lang } = Astro.props as Props
 
-// Ideally this would be part of [lang]/[...path].astro
-// However for whatever reason, i18next.changeLanguage called in that file
-// does not affect the proxied component, so instead we just do it here
-const _lang = Astro.canonicalURL.pathname.split('/')[1]
-if (_lang && (i18next.options.supportedLngs || []).includes(_lang)) {
-  await i18next.changeLanguage(_lang)
-} else {
-  await i18next.changeLanguage((i18next.options.supportedLngs || [])[0])
-}
-const lang = i18next.language
+// always update the lang for this page
+await i18next.changeLanguage(lang)
 ---
 
 <!DOCTYPE html>
